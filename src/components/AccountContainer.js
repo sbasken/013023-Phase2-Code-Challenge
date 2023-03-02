@@ -7,10 +7,15 @@ function AccountContainer() {
   const [ transactions, setTransactions ] = useState([])
   const [ searchWord, setSearchWord ] = useState("")
 
+  const deleteTransaction = (id) => {
+    const updatedTransactions = transactions.filter(transaction => transaction.id !== id)
+    setTransactions(updatedTransactions)
+  }
+
   const filterTransactions = (keyword) => {
     setSearchWord(keyword)
   }
-  
+
   const filteredTransactions = transactions.filter(transaction => (searchWord === "" ) ? transactions : transaction.description.toLowerCase().includes(searchWord.toLowerCase()))
 
   const addTransaction = (newTransaction) => {
@@ -29,7 +34,7 @@ function AccountContainer() {
     <div>
       <Search onFilterTransactions={filterTransactions}/>
       <AddTransactionForm onAddTransaction={addTransaction}/>
-      <TransactionsList transactions={filteredTransactions}/>
+      <TransactionsList transactions={filteredTransactions} onDeleteTransaction={deleteTransaction}/>
     </div>
   );
 }
