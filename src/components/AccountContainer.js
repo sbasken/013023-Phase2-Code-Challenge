@@ -1,14 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TransactionsList from "./TransactionsList";
 import Search from "./Search";
 import AddTransactionForm from "./AddTransactionForm";
 
 function AccountContainer() {
+  const [ transactions, setTransactions ] = useState([])
+  const [ searchWord, setSearchWord ] = useState("")
+
+  const filterTransactions = (keyword) => {
+    setSearchWord(keyword)
+  }
+  
+  const filteredTransactions = transactions.filter(transaction => (searchWord === "" ) ? transactions : transaction.description.toLowerCase().includes(searchWord.toLowerCase()))
+
+  const addTransaction = (newTransaction) => {
+    const updatedTransactions = [...transactions, newTransaction]
+    setTransactions(updatedTransactions)
+  }
+
+
+  useEffect(() => {
+    fetch("http://localhost:8001/transactions")
+      .then(res => res.json())
+      .then(setTransactions)
+  }, [])
+
   return (
     <div>
-      <Search />
-      <AddTransactionForm />
-      <TransactionsList />
+      <Search onFilterTransactions={filterTransactions}/>
+      <AddTransactionForm onAddTransaction={addTransaction}/>
+      <TransactionsList transactions={filteredTransactions}/>
     </div>
   );
 }
